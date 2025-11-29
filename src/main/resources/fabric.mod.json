@@ -1,9 +1,9 @@
 {
 	"schemaVersion": 1,
-	"id": "template-mod",
+	"id": "colourscroller",
 	"version": "${version}",
-	"name": "Template Mod",
-	"description": "This is an example description! Tell everyone what your mod is about!",
+	"name": "Colour Scroller",
+	"description": "Scroll for more",
 	"authors": [
 		"Anware Canella"
 	],
