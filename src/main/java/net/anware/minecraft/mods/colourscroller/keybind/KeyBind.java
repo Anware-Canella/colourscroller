@@ -73,4 +73,9 @@ public class KeyBind {
         e.put("key", this.keySequence.get());
         return e;
     }
+    
+    @Override
+    public int hashCode() {
+        return this.id.hashCode();
+    }
 }

@@ -1,6 +1,7 @@
 package net.anware.minecraft.mods.colourscroller.ui.tile.tiles;
 
 import net.anware.minecraft.mods.colourscroller.keybind.KeyBind;
+import net.anware.minecraft.mods.colourscroller.keybind.KeyBindLookup;
 import net.anware.minecraft.mods.colourscroller.keybind.KeySequence;
 import net.anware.minecraft.mods.colourscroller.ui.screen.TileScreen;
 import net.anware.minecraft.mods.colourscroller.ui.tile.button.Button;
@@ -48,6 +49,7 @@ public class KeyConfigTile extends ButtonTile {
         if (bt == this.setButton) {
             if (!this.bufKey.isEmpty()) {
                 this.keyBind.setKeySeq(new KeySequence(this.bufKey));
+                KeyBindLookup.save();
                 this.screen.setActiveTile(null);
             }
         } else if (bt == this.resetButton) {

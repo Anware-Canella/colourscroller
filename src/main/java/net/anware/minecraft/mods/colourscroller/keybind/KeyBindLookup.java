@@ -4,7 +4,7 @@ import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import net.anware.minecraft.mods.colourscroller.ui.screen.SettingScreen;
-import net.anware.minecraft.mods.colourscroller.util.File;
+import net.anware.minecraft.mods.colourscroller.util.DataFile;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.lwjgl.glfw.GLFW;
@@ -25,6 +25,33 @@ public class KeyBindLookup {
     
     public static final Map<String, KeyBind> REGISTERED_KEY_BIND = new HashMap<>();
     public static final Map<Integer, List<KeyBind>> KEYBIND_LOOKUP = new HashMap<>();
+    
+    public static void load() {
+        List<DataFile> list = KEYBIND_CONFIG_DATA_FILE.getList("keys");
+        for (DataFile entry : list) {
+            JsonObject e0 = entry.root;
+            
+            String id = e0.get("id").getAsString();
+            KeyBind bind = REGISTERED_KEY_BIND.get(id);
+            if (bind == null) continue;
+            
+            JsonArray arr = e0.getAsJsonArray("key");
+            List<Integer> keys = new ArrayList<>();
+            for (JsonElement e1 : arr) {
+                keys.add(e1.getAsInt());
+            }
+            
+            bind.setKeySeq(new KeySequence(keys));
+        }
+    }
+    
+    public static void save() {
+        List<Object> list = new ArrayList<>();
+        for (KeyBind bind : REGISTERED_KEY_BIND.values()) {
+            list.add(bind.serialize());
+        }
+        KEYBIND_CONFIG_DATA_FILE.put("keys", list);
+    }
     
     public static void register(KeyBind keyBind) {
         if (REGISTERED_KEY_BIND.containsKey(keyBind.id)) return;
@@ -50,9 +77,6 @@ public class KeyBindLookup {
         for (int k : keyBind.keySequence) {
             KEYBIND_LOOKUP.computeIfAbsent(k, l -> new ArrayList<>()).add(keyBind);
         }
-        
-        // save changes
-        save();
     }
     
     public static void onKeyEvent(long window, int key, int scancode, int action, int mods) {
@@ -62,36 +86,9 @@ public class KeyBindLookup {
         }
     }
     
-    public static void load() {
-	    List<File> list = KEYBIND_CONFIG_FILE.getList("keys");
-        for (File entry : list) {
-            JsonObject e0 = entry.root;
-            
-            String id = e0.get("id").getAsString();
-            KeyBind bind = REGISTERED_KEY_BIND.get(id);
-            if (bind == null) continue;
-            
-            JsonArray arr = e0.getAsJsonArray("key");
-            List<Integer> keys = new ArrayList<>();
-            for (JsonElement e1 : arr) {
-                keys.add(e1.getAsInt());
-            }
-            
-            bind.setKeySeq(new KeySequence(keys));
-        }
-    }
-    
-    public static void save() {
-        List<Object> list = new ArrayList<>();
-        for (KeyBind bind : REGISTERED_KEY_BIND.values()) {
-            list.add(bind.serialize());
-        }
-        KEYBIND_CONFIG_FILE.put("keys", list);
-    }
-    
     // the keys
-    protected static final Path KEYBIND_CONFIG_PATH = File.CONFIG_PATH.resolve("keybind.json");
-    protected static final File KEYBIND_CONFIG_FILE = new File(KEYBIND_CONFIG_PATH);
+    protected static final Path KEYBIND_CONFIG_PATH = DataFile.CONFIG_PATH.resolve("keybind.json");
+    protected static final DataFile KEYBIND_CONFIG_DATA_FILE = new DataFile(KEYBIND_CONFIG_PATH);
     
     public static final KeyBind OPEN_CONFIG = new KeyBind("open config", new KeySequence(GLFW.GLFW_KEY_O)) {
         @Override

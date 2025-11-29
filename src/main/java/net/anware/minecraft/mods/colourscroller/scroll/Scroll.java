@@ -1,5 +1,7 @@
 package net.anware.minecraft.mods.colourscroller.scroll;
 
+import net.anware.minecraft.mods.colourscroller.util.GameUtil;
+import net.anware.minecraft.mods.colourscroller.util.Numpy;
 import net.minecraft.item.Item;
 
 import java.util.ArrayList;
@@ -20,14 +22,31 @@ public class Scroll {
 	protected final String id;
 	protected final List<Item> items;
 	
-	public Item getPrevious() {
-	
+	public Item getShifted(Item item, int shift) {
+		int index = this.items.indexOf(item);
+		if (index == -1) {
+			return null;
+		}
+		return this.items.get(Numpy.roundIndex(index + shift, this.items.size()));
 	}
 	
+	@SuppressWarnings("ConstantConditions")
 	public Object serialize() {
 		Map<String, Object> e = new LinkedHashMap<>();
 		e.put("id", id);
-		e.put("items", this.items);
+		
+		List<String> itemIDs = new ArrayList<>();
+		for (Item item : items) {
+			itemIDs.add(GameUtil.getID(item).toString());
+		}
+		e.put("items", itemIDs);
+		
 		return e;
+	}
+
+	
+	@Override
+	public int hashCode() {
+		return this.id.hashCode();
 	}
 }

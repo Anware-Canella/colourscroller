@@ -46,9 +46,6 @@ public class TileScreen extends Screen {
     }
 
     public void setActiveTile(Tile activeTile) {
-        
-        System.out.println("setting active " + activeTile);
-        
         if (activeTile == this.activeTile) {
             return;
         }

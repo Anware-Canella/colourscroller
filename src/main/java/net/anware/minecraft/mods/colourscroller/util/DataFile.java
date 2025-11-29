@@ -21,8 +21,8 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
-public class File {
-	public File(Path path) {
+public class DataFile {
+	public DataFile(Path path) {
 		this.path = path;
 		this.root = loadOrCreate(path);
 	}
@@ -39,39 +39,39 @@ public class File {
 	}
 	
 	/** Get a nested Json view for objects */
-	public File get(String key) {
+	public DataFile get(String key) {
 		JsonElement el = root.get(key);
 		if (el == null || !el.isJsonObject())
 			throw new RuntimeException("Key '" + key + "' is not an object");
-		return new File(path, el.getAsJsonObject());
+		return new DataFile(path, el.getAsJsonObject());
 	}
 	
 	/** Get a list of strings (or nested structures) */
-	public List<File> getList(String key) {
+	public List<DataFile> getList(String key) {
 		JsonElement el = root.get(key);
 		if (el == null || !el.isJsonArray())
 			throw new RuntimeException("Key '" + key + "' is not a list");
 		
-		List<File> out = new ArrayList<>();
+		List<DataFile> out = new ArrayList<>();
 		for (JsonElement e : el.getAsJsonArray()) {
 			if (!e.isJsonObject())
 				throw new RuntimeException("List element is not an object");
-			out.add(new File(path, e.getAsJsonObject()));
+			out.add(new DataFile(path, e.getAsJsonObject()));
 		}
 		return out;
 	}
 	
 	/** Get map-like structure (String → Json) */
-	public Map<String, File> getMap(String key) {
+	public Map<String, DataFile> getMap(String key) {
 		JsonElement el = root.get(key);
 		if (el == null || !el.isJsonObject())
 			throw new RuntimeException("Key '" + key + "' is not an object");
 		
-		Map<String, File> map = new LinkedHashMap<>();
+		Map<String, DataFile> map = new LinkedHashMap<>();
 		for (Map.Entry<String, JsonElement> e : el.getAsJsonObject().entrySet()) {
 			if (!e.getValue().isJsonObject())
 				throw new RuntimeException("Map value is not an object");
-			map.put(e.getKey(), new File(path, e.getValue().getAsJsonObject()));
+			map.put(e.getKey(), new DataFile(path, e.getValue().getAsJsonObject()));
 		}
 		return map;
 	}
@@ -79,13 +79,12 @@ public class File {
 	// ----------------------------------------- INTERNAL -----------------------------------------
 	
 	/** Private constructor for nested Json views */
-	private File(Path path, JsonObject internalRoot) {
+	private DataFile(Path path, JsonObject internalRoot) {
 		this.path = path;
 		this.root = internalRoot;
 	}
 	
 	/** Convert nested List/Map/String recursively into JsonElement */
-	@SuppressWarnings("unchecked")
 	private JsonElement toJsonValue(Object value) {
 		if (value == null)
 			return JsonNull.INSTANCE;
