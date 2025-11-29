@@ -1,0 +1,30 @@
+{
+	"schemaVersion": 1,
+	"id": "template-mod",
+	"version": "${version}",
+	"name": "Template Mod",
+	"description": "This is an example description! Tell everyone what your mod is about!",
+	"authors": [
+		"Anware Canella"
+	],
+	"license": "MIT",
+	"icon": "assets/template-mod/icon.png",
+	"environment": "*",
+	"entrypoints": {
+		"client": [
+			"net.anware.minecraft.mods.colourscroller.Client"
+		]
+	},
+	"mixins": [
+		"scroll.mixins.json"
+	],
+	"depends": {
+		"fabricloader": ">=0.16.14",
+		"minecraft": "~1.17",
+		"java": ">=16",
+		"fabric": "*"
+	},
+	"suggests": {
+		"another-mod": "*"
+	}
+}
