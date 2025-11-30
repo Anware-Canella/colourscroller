@@ -1,4 +1,4 @@
-package net.anware.minecraft.mods.colourscroller.ui.tile.components.button;
+package net.anware.minecraft.mods.colourscroller.ui.tile.components;
 
 import net.anware.minecraft.mods.colourscroller.ui.tile.Tile;
 import net.minecraft.client.font.TextRenderer;
@@ -19,8 +19,6 @@ public class Button<T extends Tile> extends Clickable<T> {
     
     @Override
     public void draw(MatrixStack matrices, int mouse_x, int mouse_y, float delta) {
-        this.hover = this.checkHover(mouse_x, mouse_y);
-        
         int x = this.x();
         int y = this.y();
         

@@ -31,6 +31,10 @@ public class Scroll {
 		return this.items.size();
 	}
 	
+	public String getId() {
+		return this.id;
+	}
+	
 	public Item getItem(int index) {
 		return this.items.get(index);
 	}

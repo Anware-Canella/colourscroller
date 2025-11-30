@@ -2,7 +2,6 @@ package net.anware.minecraft.mods.colourscroller.ui.tile;
 
 import com.mojang.blaze3d.systems.RenderSystem;
 import net.anware.minecraft.mods.colourscroller.ui.screen.TileScreen;
-import net.anware.minecraft.mods.colourscroller.ui.tile.components.Component;
 import net.anware.minecraft.mods.colourscroller.util.GameUtil;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.font.TextRenderer;
@@ -63,7 +62,10 @@ public abstract class Tile implements Drawable, Element, Selectable {
     public void render(MatrixStack matrices, int mouse_x, int mouse_y, float delta) {
         mouse_y += (int) this.getScreen().getScroll();
         this.draw(matrices, mouse_x, mouse_y, delta);
-        for (Component<?> c : this.components) c.draw(matrices, mouse_x, mouse_y, delta);
+        for (Component<?> c : this.components) {
+            c.hover = c.checkHover(mouse_x, mouse_y);
+            c.draw(matrices, mouse_x, mouse_y, delta);
+        }
     }
     
     @Override
@@ -166,30 +168,29 @@ public abstract class Tile implements Drawable, Element, Selectable {
     // -------------------- HELPER -------------------------
     
     public static final int
-        ALIGN_NONE      = 0,
-        ALIGN_CENTER    = 1,
-        ALIGN_LEFT      = 2;
+        ALIGN_MID_H     = 0x0001,
+        ALIGN_MID_V     = 0x0002,
+        ALIGN_CENTER    = 0x0003,
+        ALIGN_LEFT      = 0x0000;
     public static final int
-        STATE_DISABLED  = 0,
-        STATE_IDLE      = 1,
-        STATE_HOVER     = 2,
-        STATE_ACTIVE    = 3;
+        STATE_DISABLED  = 0x0000,
+        STATE_IDLE      = 0x0001,
+        STATE_HOVER     = 0x0002,
+        STATE_ACTIVE    = 0x0004;
     public static final ItemRenderer ITEM_RENDERER = MinecraftClient.getInstance().getItemRenderer();
     public static final int ITEM_SIZE = 16;
-    
-    public final void drawText(MatrixStack mxs, Text text, float x, float y, int color) {
-        this.drawText(mxs, text, x, y, color, ALIGN_LEFT);
-    }
     
     public final void drawText(MatrixStack mxs, Text text, float x, float y, int colour, int alignment) {
         TextRenderer textRenderer = this.getScreen().getTextRenderer();
         if (textRenderer == null || text == null) return;
         OrderedText orderedText = text.asOrderedText();
-        if (alignment == ALIGN_CENTER) {
+        if ((alignment & ALIGN_MID_H) != 0) {
             x = x - (float) textRenderer.getWidth(orderedText) / 2;
         }
-        if (alignment == ALIGN_LEFT || alignment == ALIGN_CENTER) {
-            y = y - 4;
+        if ((alignment & ALIGN_MID_V) != 0) {
+            y -= 4;
+        } else {
+            y -= 8;
         }
         textRenderer.drawWithShadow(mxs, orderedText, x, y, colour);
     }

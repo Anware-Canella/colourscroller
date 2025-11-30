@@ -4,7 +4,8 @@ import net.anware.minecraft.mods.colourscroller.scroll.Scroll;
 import net.anware.minecraft.mods.colourscroller.scroll.ScrollLookup;
 import net.anware.minecraft.mods.colourscroller.ui.screen.TileScreen;
 import net.anware.minecraft.mods.colourscroller.ui.tile.Tile;
-import net.anware.minecraft.mods.colourscroller.ui.tile.components.button.Clickable;
+import net.anware.minecraft.mods.colourscroller.ui.tile.components.Clickable;
+import net.anware.minecraft.mods.colourscroller.ui.tile.components.TextBox;
 import net.anware.minecraft.mods.colourscroller.util.GameUtil;
 import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.item.Item;
@@ -17,25 +18,26 @@ public class ScrollTile extends Tile {
         this.scroll = scroll;
 	    this.width = width;
 	    this.lineHeight = lineHeight;
+        
         this.removeButton = new Clickable<>(this, this.width - TITLE_HEIGHT, 0, TITLE_HEIGHT, TITLE_HEIGHT) {
             @Override
             protected boolean clicked() {
                 ScrollLookup.deleteScroll(this.parent.scroll);
                 this.parent.getScreen().removeTiles(this.parent);
-                this.parent.getScreen().reloadChildren();
-                return true;
+                return false;
             }
             
             @Override
             public void draw(MatrixStack matrices, int mouse_x, int mouse_y, float delta) {
-                this.hover = this.checkHover(mouse_x, mouse_y);
                 int x = this.x(), y = this.y();
-                if (hover) {
+                if (this.hover) {
                     this.parent.drawBox(matrices, x, x + this.w, y, y + this.h, 0xEEFF2020);
                 }
                 this.parent.drawCenteredLine(matrices, x + this.w / 2, y + this.h / 2, 6, 0xDDFFFFFF);
             }
         };
+        
+        this.nameTextBox = new TextBox<>(this, 50, this.y, 60, 18, this.scroll.getId());
     }
 
     public static final int
@@ -45,6 +47,7 @@ public class ScrollTile extends Tile {
     protected final Scroll scroll;
     protected final int width, lineHeight;
     protected int activeButton = -1;
+    protected final TextBox<ScrollTile> nameTextBox;
     protected final Clickable<ScrollTile> removeButton;
     
     @Override
@@ -56,7 +59,7 @@ public class ScrollTile extends Tile {
     public void draw(MatrixStack matrices, int mouse_x, int mouse_y, float delta) {
         this.drawBox(matrices, this.x, this.x + this.width, this.y, this.y + this.getContentHeight(), 0xAA202020, 0xFF000000);
         this.drawBox(matrices, this.x, this.x + this.width, this.y, this.y + TITLE_HEIGHT, 0xEE202020);
-        this.drawText(matrices, new LiteralText("Name:"), this.x + 4, this.y + TITLE_HEIGHT - 8, this.activeButton == ID_BUTTON ? 0xFF707070 : 0xFFFFFFFF);
+        this.drawText(matrices, new LiteralText("Name:"), this.x + 4, this.y + TITLE_HEIGHT - 4, this.activeButton == ID_BUTTON ? 0xFF707070 : 0xFFFFFFFF, Tile.ALIGN_LEFT);
         
         if (this.activeButton != -1) {
             if (this.activeButton == ID_BUTTON) {
@@ -82,7 +85,7 @@ public class ScrollTile extends Tile {
             Item item = this.scroll.getItem(i);
             int base_y = this.y + TITLE_HEIGHT + i * this.lineHeight;
             this.drawCenteredItem(matrices, item, this.x + this.lineHeight / 2 + 3, base_y + this.lineHeight / 2, 1.0f);
-            this.drawText(matrices, new LiteralText(GameUtil.getName(item).toString()), this.x + this.lineHeight + 6, base_y + 10, this.activeButton == i ? 0xFF707070 : 0xFFFFFFFF);
+            this.drawText(matrices, new LiteralText(GameUtil.getName(item).toString()), this.x + this.lineHeight + 6, base_y + (float) this.lineHeight / 2, this.activeButton == i ? 0xFF707070 : 0xFFFFFFFF, Tile.ALIGN_MID_V);
             this.drawCenteredLine(matrices, this.x + this.width - this.lineHeight / 2, this.y + TITLE_HEIGHT + i * this.lineHeight + this.lineHeight / 2, 6, 0xDDFFFFFF);
         }
     }
@@ -130,11 +133,6 @@ public class ScrollTile extends Tile {
             }
             return true;
         }
-        return false;
-    }
-    
-    @Override
-    protected boolean typed(char c) {
         return false;
     }
     

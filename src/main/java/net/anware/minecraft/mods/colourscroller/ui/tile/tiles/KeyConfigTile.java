@@ -5,7 +5,7 @@ import net.anware.minecraft.mods.colourscroller.keybind.KeyBindLookup;
 import net.anware.minecraft.mods.colourscroller.keybind.KeySequence;
 import net.anware.minecraft.mods.colourscroller.ui.screen.TileScreen;
 import net.anware.minecraft.mods.colourscroller.ui.tile.Tile;
-import net.anware.minecraft.mods.colourscroller.ui.tile.components.button.Button;
+import net.anware.minecraft.mods.colourscroller.ui.tile.components.Button;
 import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.text.LiteralText;
 

@@ -22,6 +22,6 @@ public class PlainTextTile extends Tile {
 
     @Override
     public void draw(MatrixStack matrices, int mouseX, int mouseY, float delta) {
-        this.drawText(matrices, this.text, this.x, this.y, this.colour);
+        this.drawText(matrices, this.text, this.x, this.y + (float) this.getContentHeight() / 2, this.colour, Tile.ALIGN_MID_V);
     }
 }

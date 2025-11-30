@@ -1,6 +1,5 @@
-package net.anware.minecraft.mods.colourscroller.ui.tile.components;
+package net.anware.minecraft.mods.colourscroller.ui.tile;
 
-import net.anware.minecraft.mods.colourscroller.ui.tile.Tile;
 import net.minecraft.client.util.math.MatrixStack;
 
 public abstract class Component<T extends Tile> {
@@ -15,7 +14,8 @@ public abstract class Component<T extends Tile> {
 	
 	protected final T parent;
 	protected boolean active = false;
-	protected int x, y, w, h;
+	private final int x, y;
+	protected final int w, h;
 	protected boolean hover = false;
 	
 	public void setActive(boolean active) {

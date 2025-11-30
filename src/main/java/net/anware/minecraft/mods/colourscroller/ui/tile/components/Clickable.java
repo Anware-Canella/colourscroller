@@ -1,7 +1,7 @@
-package net.anware.minecraft.mods.colourscroller.ui.tile.components.button;
+package net.anware.minecraft.mods.colourscroller.ui.tile.components;
 
+import net.anware.minecraft.mods.colourscroller.ui.tile.Component;
 import net.anware.minecraft.mods.colourscroller.ui.tile.Tile;
-import net.anware.minecraft.mods.colourscroller.ui.tile.components.Component;
 
 public class Clickable<T extends Tile> extends Component<T> {
     public Clickable(T parent, int x, int y, int w, int h) {
