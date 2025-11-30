@@ -34,7 +34,7 @@ public class KeyConfigTile extends Tile {
                     KeyBindLookup.save();
                     this.parent.getScreen().setActiveTile(null);
                 }
-                return true;
+                return false;
             }
         };
         this.resetButton = new Button<>(this, 250, 0, 40, this.height, new LiteralText("RESET")) {
@@ -42,7 +42,7 @@ public class KeyConfigTile extends Tile {
             protected boolean clicked() {
                 this.parent.keyBind.resetKeySeq();
                 this.parent.screen.setActiveTile(null);
-                return true;
+                return false;
             }
         };
     }

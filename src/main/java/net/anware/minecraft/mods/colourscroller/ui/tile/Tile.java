@@ -37,7 +37,7 @@ public abstract class Tile implements Drawable, Element, Selectable {
     protected final int paddingTop, paddingBottom;
     protected final List<Component<?>> components = new ArrayList<>();
     protected Component<?> activeComponent = null;
-    
+
     protected void setActiveComponent(Component<?> component) {
         if (component == this.activeComponent) {
             return;
@@ -52,7 +52,7 @@ public abstract class Tile implements Drawable, Element, Selectable {
     }
     
     public static void playButtonSound() {
-        GameUtil.CLIENT.getSoundManager().play(PositionedSoundInstance.master(SoundEvents.UI_BUTTON_CLICK, 1.2f));
+        GameUtil.CLIENT.getSoundManager().play(PositionedSoundInstance.master(SoundEvents.UI_BUTTON_CLICK, 0.8F));
     }
     
     public void addComponent(Component<?> component) {
@@ -61,6 +61,7 @@ public abstract class Tile implements Drawable, Element, Selectable {
     
     @Override
     public void render(MatrixStack matrices, int mouse_x, int mouse_y, float delta) {
+        mouse_y += (int) this.getScreen().getScroll();
         this.draw(matrices, mouse_x, mouse_y, delta);
         for (Component<?> c : this.components) c.draw(matrices, mouse_x, mouse_y, delta);
     }
@@ -79,13 +80,13 @@ public abstract class Tile implements Drawable, Element, Selectable {
     
     @Override
     public final boolean mouseClicked(double mouse_x, double mouse_y, int button) {
+        mouse_y += this.getScreen().getScroll();
         boolean componentClick = false;
         for (Component<?> c : this.components) {
             boolean clicked = c.clicked(mouse_x, mouse_y);
             componentClick |= clicked;
             if (clicked) {
                 this.setActiveComponent(c);
-                this.getScreen().setActiveTile(this);
             }
         }
         if (!componentClick) {
@@ -94,7 +95,9 @@ public abstract class Tile implements Drawable, Element, Selectable {
                 this.getScreen().setActiveTile(null);
             }
         }
-        return this.clicked(mouse_x, mouse_y) || componentClick;
+        boolean res = this.clicked(mouse_x, mouse_y) || componentClick;
+        if (res) this.getScreen().setActiveTile(this);
+        return res;
     }
     
     protected abstract void draw(MatrixStack matrices, int mouse_x, int mouse_y, float delta);
@@ -212,10 +215,6 @@ public abstract class Tile implements Drawable, Element, Selectable {
         DrawableHelper.fill(mxs, x, y + 1, x + 1, y1, colour);
     }
     
-    public final void drawCenteredLine(MatrixStack mxs, int x, int y, int len, int colour) {
-        drawHoriLine(mxs, x - len / 2, x + len / 2, y, colour);
-    }
-    
     public final void drawHoriLine(MatrixStack mxs, int x, int x1, int y, int colour) {
         if (x1 < x) {
             int i = x;
@@ -225,25 +224,25 @@ public abstract class Tile implements Drawable, Element, Selectable {
         DrawableHelper.fill(mxs, x, y, x1 + 1, y + 1, colour);
     }
     
-    public final void drawLine() {
-    
+    public final void drawCenteredLine(MatrixStack mxs, int x, int y, int len, int colour) {
+        drawHoriLine(mxs, x - len / 2, x + len / 2, y, colour);
     }
     
-    public final void drawItem(ItemStack stack, int x, int y, float scale) {
-        MatrixStack mxs = RenderSystem.getModelViewStack();
-        mxs.push();
-        mxs.translate(x, y, 0);
-        mxs.scale(scale, scale, scale);
+    public final void drawItem(MatrixStack mxs, ItemStack stack, int x, int y, float scale) {
+        MatrixStack matrix = RenderSystem.getModelViewStack();
+        matrix.push();
+        matrix.translate(x, y - this.getScreen().getScroll(), 0);
+        matrix.scale(scale, scale, scale);
         ITEM_RENDERER.renderInGuiWithOverrides(stack, 0, 0);
-        mxs.pop();
+        matrix.pop();
         RenderSystem.applyModelViewMatrix();
     }
     
-    public final void drawItem(Item item, int x, int y, float scale) {
-        this.drawItem(new ItemStack(item), x, y, scale);
+    public final void drawItem(MatrixStack mxs, Item item, int x, int y, float scale) {
+        this.drawItem(mxs, new ItemStack(item), x, y, scale);
     }
     
-    public final void drawCenteredItem(Item item, int x, int y, float scale) {
-        this.drawItem(item, Math.round(x - 8 * scale), Math.round(y - 8 * scale), scale);
+    public final void drawCenteredItem(MatrixStack mxs, Item item, int x, int y, float scale) {
+        this.drawItem(mxs, item, Math.round(x - 8 * scale), Math.round(y - 8 * scale), scale);
     }
 }

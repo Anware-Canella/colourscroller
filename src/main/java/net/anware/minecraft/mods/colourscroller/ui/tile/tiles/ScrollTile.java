@@ -81,9 +81,16 @@ public class ScrollTile extends Tile {
         for (int i = 0; i < this.scroll.size(); i++) {
             Item item = this.scroll.getItem(i);
             int base_y = this.y + TITLE_HEIGHT + i * this.lineHeight;
-            this.drawCenteredItem(item, this.x + this.lineHeight / 2 + 3, base_y + this.lineHeight / 2, 1.0f);
+            this.drawCenteredItem(matrices, item, this.x + this.lineHeight / 2 + 3, base_y + this.lineHeight / 2, 1.0f);
             this.drawText(matrices, new LiteralText(GameUtil.getName(item).toString()), this.x + this.lineHeight + 6, base_y + 10, this.activeButton == i ? 0xFF707070 : 0xFFFFFFFF);
             this.drawCenteredLine(matrices, this.x + this.width - this.lineHeight / 2, this.y + TITLE_HEIGHT + i * this.lineHeight + this.lineHeight / 2, 6, 0xDDFFFFFF);
+        }
+    }
+    
+    @Override
+    public void setActive(boolean active) {
+        if (!active) {
+            this.activeButton = -1;
         }
     }
     

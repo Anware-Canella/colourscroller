@@ -15,10 +15,14 @@ public class ScrollConfigScreen extends TileScreen {
 		super(new LiteralText("Scrolls"));
 		
 		List<Tile> tiles = new ArrayList<>();
-		tiles.add(new PlainTextTile(this, 20, 20, 20, new LiteralText("Colour Scroller Configs"), 0xFFFFFFFF));
+		
+		tiles.add(new PlainTextTile(this, 20, 0, 20, new LiteralText("Scroll Configs"), 0xFFFFFFFF));
+		tiles.add(ConfigScreen.getTabTile(this));
+		
 		for (Scroll scroll : ScrollLookup.SCROLL_REGISTRY.values()) {
 			tiles.add(new ScrollTile(this, 30, 10, 0, scroll, 250, 20));
 		}
+		
 		this.addTiles(tiles);
 	}
 }

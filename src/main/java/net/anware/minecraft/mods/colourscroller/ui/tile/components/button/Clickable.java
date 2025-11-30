@@ -5,23 +5,10 @@ import net.anware.minecraft.mods.colourscroller.ui.tile.components.Component;
 
 public class Clickable<T extends Tile> extends Component<T> {
     public Clickable(T parent, int x, int y, int w, int h) {
-	    super(parent);
-        this.x = x;
-        this.y = y;
-        this.w = w;
-        this.h = h;
+        super(parent, x, y, w, h);
     }
-
-    protected int x, y, w, h;
-    protected boolean enabled = true;
-    protected boolean active = false;
-    protected boolean hover = false;
     
-    public boolean checkHover(int mouse_x, int mouse_y) {
-        boolean x = mouse_x >= this.x() && mouse_x <= this.x() + this.w;
-        boolean y = mouse_y >= this.y() && mouse_y <= this.y() + this.h;
-        return x && y;
-    }
+    protected boolean enabled = true;
     
     @Override
     public boolean clicked(double mouse_x, double mouse_y) {
@@ -40,14 +27,6 @@ public class Clickable<T extends Tile> extends Component<T> {
     }
     
     // -------------------- GETTER / SETTER -------------------------
-
-    public int x() {
-        return this.x + this.parent.get_x();
-    }
-
-    public int y() {
-        return this.y + this.parent.get_y();
-    }
     
     public boolean enabled() {
         return this.enabled;
@@ -55,9 +34,5 @@ public class Clickable<T extends Tile> extends Component<T> {
     
     public void setEnabled(boolean enabled) {
         this.enabled = enabled;
-    }
-    
-    public void setActive(boolean active) {
-        this.active = active;
     }
 }
