@@ -8,7 +8,7 @@
 		"Anware Canella"
 	],
 	"license": "MIT",
-	"icon": "assets/template-mod/icon.png",
+	"icon": "assets/colourscroller/icon.png",
 	"environment": "*",
 	"entrypoints": {
 		"client": [

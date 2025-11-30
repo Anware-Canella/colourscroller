@@ -6,6 +6,7 @@ import net.anware.minecraft.mods.colourscroller.util.GameUtil;
 import net.minecraft.item.Item;
 import net.minecraft.item.Items;
 
+import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.ArrayList;
@@ -15,8 +16,8 @@ import java.util.Map;
 
 public class ScrollLookup {
 	
-	public static final Map<String, Scroll> REGISTERED_SCROLL = new HashMap<>();
-	public static final Map<Item, Scroll> SCROLL_ID_LOOKUP = new HashMap<>();
+	public static final Map<String, Scroll> SCROLL_REGISTRY = new HashMap<>();
+	public static final Map<Item, Scroll> SCROLL_LOOKUP = new HashMap<>();
 	public static final Path SCROLL_FOLDER = DataFile.CONFIG_PATH.resolve("scrolls");
 	
 	public static void load() {
@@ -57,48 +58,54 @@ public class ScrollLookup {
 	}
 	
 	public static void save() {
-		try {
-			Files.createDirectories(SCROLL_FOLDER);
-			for (Scroll scroll : REGISTERED_SCROLL.values()) {
-				try {
-					DataFile file = new DataFile(SCROLL_FOLDER.resolve(scroll.id + ".json"));
-					file.put("scroll", scroll.serialize());
-				} catch (Exception ex) {
-					Client.printError("failed to save scroll " + scroll.id + ": " + ex);
-				}
-			}
-		} catch (Exception e) {
-			Client.printError("failed to save scroll folder: " + e);
+		for (Scroll scroll : SCROLL_REGISTRY.values()) {
+			scroll.save();
 		}
 	}
 	
 	public static void register(Scroll scroll) {
-		if (REGISTERED_SCROLL.containsKey(scroll.id)) {
+		if (SCROLL_REGISTRY.containsKey(scroll.id)) {
 			return;
 		}
-		for (Item item : scroll.items) if (SCROLL_ID_LOOKUP.containsKey(item)) {
+		for (Item item : scroll.items) if (SCROLL_LOOKUP.containsKey(item)) {
 			return;
 		}
 		for (Item item : scroll.items) {
-			SCROLL_ID_LOOKUP.put(item, scroll);
+			SCROLL_LOOKUP.put(item, scroll);
 		}
-		REGISTERED_SCROLL.put(scroll.id, scroll);
+		SCROLL_REGISTRY.put(scroll.id, scroll);
 	}
 	
 	public static Scroll find(String id) {
-		return REGISTERED_SCROLL.get(id);
+		return SCROLL_REGISTRY.get(id);
 	}
 	
 	public static Scroll findScroll(Item item) {
-		return SCROLL_ID_LOOKUP.get(item);
+		return SCROLL_LOOKUP.get(item);
 	}
 	
 	public static Item getShifted(Item item, int shift) {
-		Scroll scroll =  SCROLL_ID_LOOKUP.get(item);
+		Scroll scroll =  SCROLL_LOOKUP.get(item);
 		if (scroll == null) {
 			return null;
 		}
 		return scroll.getShifted(item, shift);
+	}
+	
+	public static void deleteItem(Item item) {
+		SCROLL_LOOKUP.remove(item);
+	}
+	
+	public static void deleteScroll(Scroll scroll) {
+		for (Item item : scroll.items) {
+			SCROLL_LOOKUP.remove(item);
+		}
+		SCROLL_REGISTRY.remove(scroll.id);
+		try {
+			Files.deleteIfExists(SCROLL_FOLDER.resolve(scroll.id + ".json"));
+		} catch (IOException e) {
+			Client.printError("failed to remove json file for " + scroll.id);
+		}
 	}
 	
 	// default scrolls

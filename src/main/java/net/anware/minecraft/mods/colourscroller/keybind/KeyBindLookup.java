@@ -3,7 +3,7 @@ package net.anware.minecraft.mods.colourscroller.keybind;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
-import net.anware.minecraft.mods.colourscroller.ui.screen.SettingScreen;
+import net.anware.minecraft.mods.colourscroller.ui.screen.ScrollConfigScreen;
 import net.anware.minecraft.mods.colourscroller.util.DataFile;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -93,7 +93,7 @@ public class KeyBindLookup {
     public static final KeyBind OPEN_CONFIG = new KeyBind("open config", new KeySequence(GLFW.GLFW_KEY_O)) {
         @Override
         public void onPress() {
-            if (CLIENT.currentScreen == null) CLIENT.openScreen(new SettingScreen());
+            if (CLIENT.currentScreen == null) CLIENT.openScreen(new ScrollConfigScreen());
         }
     };
     public static final KeyBind SCROLL_SINGLE = new KeyBind("scroll single", new KeySequence(GLFW.GLFW_KEY_LEFT_CONTROL, GLFW.GLFW_KEY_G));

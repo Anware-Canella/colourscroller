@@ -9,7 +9,6 @@ public class Button<T extends Tile> extends Clickable<T> {
     public Button(T parent, int x, int y, int w, int h, Text text) {
         super(parent, x, y, w, h);
         this.text = text;
-        parent.addComponent(this);
     }
 
     protected Text text;

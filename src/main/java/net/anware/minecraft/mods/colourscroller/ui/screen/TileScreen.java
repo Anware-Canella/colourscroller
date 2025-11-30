@@ -17,18 +17,20 @@ public class TileScreen extends Screen {
 
     protected final List<Tile> tiles = new ArrayList<>();
     protected Tile activeTile = null;
+    
+    public void addTiles(List<Tile> tiles) {
+        addTiles(tiles.toArray(new Tile[0]));
+    }
 
-    protected void addTiles(Tile... tiles) {
+    public void addTiles(Tile... tiles) {
         for (Tile t : tiles) {
-            if (this.tiles.contains(t)) {
-                continue;
-            }
+            if (this.tiles.contains(t)) continue;
             this.tiles.add(t);
         }
         this.reloadChildren();
     }
 
-    protected void removeTiles(Tile... tiles) {
+    public void removeTiles(Tile... tiles) {
         for (Tile t : tiles) {
             this.tiles.remove(t);
         }

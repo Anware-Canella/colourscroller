@@ -6,6 +6,7 @@ import net.minecraft.client.util.math.MatrixStack;
 public abstract class Component<T extends Tile> {
 	public Component(T parent) {
 		this.parent = parent;
+		parent.addComponent(this);
 	}
 	
 	protected final T parent;
@@ -15,7 +16,7 @@ public abstract class Component<T extends Tile> {
 		this.active = active;
 	}
 	
-	public void draw(MatrixStack matrices, int mouseX, int mouseY, float delta) {}
+	public void draw(MatrixStack matrices, int mouse_x, int mouse_y, float delta) {}
 	
 	public boolean clicked(double mouse_x, double mouse_y) {
 		return false;

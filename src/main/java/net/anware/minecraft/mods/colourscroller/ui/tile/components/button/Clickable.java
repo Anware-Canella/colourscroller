@@ -2,9 +2,8 @@ package net.anware.minecraft.mods.colourscroller.ui.tile.components.button;
 
 import net.anware.minecraft.mods.colourscroller.ui.tile.Tile;
 import net.anware.minecraft.mods.colourscroller.ui.tile.components.Component;
-import net.minecraft.client.util.math.MatrixStack;
 
-public abstract class Clickable<T extends Tile> extends Component<T> {
+public class Clickable<T extends Tile> extends Component<T> {
     public Clickable(T parent, int x, int y, int w, int h) {
 	    super(parent);
         this.x = x;
@@ -17,8 +16,6 @@ public abstract class Clickable<T extends Tile> extends Component<T> {
     protected boolean enabled = true;
     protected boolean active = false;
     protected boolean hover = false;
-    
-    public abstract void draw(MatrixStack matrices, int mouse_x, int mouse_y, float delta);
     
     public boolean checkHover(int mouse_x, int mouse_y) {
         boolean x = mouse_x >= this.x() && mouse_x <= this.x() + this.w;

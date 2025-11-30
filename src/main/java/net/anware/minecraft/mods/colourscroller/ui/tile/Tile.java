@@ -35,10 +35,10 @@ public abstract class Tile implements Drawable, Element, Selectable {
     protected int x, y = 0;
     protected final TileScreen screen;
     protected final int paddingTop, paddingBottom;
-    protected final List<Component> components = new ArrayList<>();
-    protected Component activeComponent = null;
+    protected final List<Component<?>> components = new ArrayList<>();
+    protected Component<?> activeComponent = null;
     
-    protected void setActiveComponent(Component component) {
+    protected void setActiveComponent(Component<?> component) {
         if (component == this.activeComponent) {
             return;
         }
@@ -55,14 +55,14 @@ public abstract class Tile implements Drawable, Element, Selectable {
         GameUtil.CLIENT.getSoundManager().play(PositionedSoundInstance.master(SoundEvents.UI_BUTTON_CLICK, 1.2f));
     }
     
-    public void addComponent(Component component) {
+    public void addComponent(Component<?> component) {
         this.components.add(component);
     }
     
     @Override
-    public void render(MatrixStack matrices, int mouseX, int mouseY, float delta) {
-        for (Component c : this.components) c.draw(matrices, mouseX, mouseY, delta);
-        this.draw(matrices, mouseX, mouseY, delta);
+    public void render(MatrixStack matrices, int mouse_x, int mouse_y, float delta) {
+        this.draw(matrices, mouse_x, mouse_y, delta);
+        for (Component<?> c : this.components) c.draw(matrices, mouse_x, mouse_y, delta);
     }
     
     @Override
@@ -80,7 +80,7 @@ public abstract class Tile implements Drawable, Element, Selectable {
     @Override
     public final boolean mouseClicked(double mouse_x, double mouse_y, int button) {
         boolean componentClick = false;
-        for (Component c : this.components) {
+        for (Component<?> c : this.components) {
             boolean clicked = c.clicked(mouse_x, mouse_y);
             componentClick |= clicked;
             if (clicked) {
@@ -212,6 +212,10 @@ public abstract class Tile implements Drawable, Element, Selectable {
         DrawableHelper.fill(mxs, x, y + 1, x + 1, y1, colour);
     }
     
+    public final void drawCenteredLine(MatrixStack mxs, int x, int y, int len, int colour) {
+        drawHoriLine(mxs, x - len / 2, x + len / 2, y, colour);
+    }
+    
     public final void drawHoriLine(MatrixStack mxs, int x, int x1, int y, int colour) {
         if (x1 < x) {
             int i = x;
@@ -219,6 +223,10 @@ public abstract class Tile implements Drawable, Element, Selectable {
             x1 = i;
         }
         DrawableHelper.fill(mxs, x, y, x1 + 1, y + 1, colour);
+    }
+    
+    public final void drawLine() {
+    
     }
     
     public final void drawItem(ItemStack stack, int x, int y, float scale) {
