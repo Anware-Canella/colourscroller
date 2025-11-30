@@ -1,6 +1,5 @@
 package net.anware.minecraft.mods.colourscroller.util;
 
-import net.anware.minecraft.mods.colourscroller.Client;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.item.Item;
 import net.minecraft.text.Text;
@@ -20,6 +19,17 @@ public class GameUtil {
     }
     
     public static String getName(Item item) {
+        String path = getPath(item);
+	    StringBuilder name = new StringBuilder();
+        for (String part : path.split("_")) {
+            if (!part.isEmpty()) {
+                name.append(Character.toUpperCase(part.charAt(0))).append(part.substring(1).toLowerCase()).append(" ");
+            }
+        }
+        return name.toString();
+    }
+    
+    public static String getPath(Item item) {
         Identifier id = getID(item);
         if (id == null) return null;
         return id.getPath();
@@ -31,11 +41,6 @@ public class GameUtil {
      */
     public static Item getItem(String id) {
         if (id == null || id.isEmpty()) return null;
-        try {
-	        return Registry.ITEM.get(new Identifier(id));
-        } catch (Exception e) {
-            Client.printError("invalid item id: " + id);
-            return null;
-        }
+        return Registry.ITEM.get(new Identifier(id));
     }
 }

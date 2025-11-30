@@ -59,18 +59,24 @@ public class TileScreen extends Screen {
         this.activeTile = activeTile;
     }
     
+    public void arrangeChildren() {
+        int y = 0;
+        for (Tile tile : this.tiles) {
+            tile.set_y(y + tile.getPaddingTop());
+            y += tile.getPageHeight();
+        }
+    }
+    
     public void reloadChildren() {
         this.clearChildren();
         this.loadChildren();
     }
 
     public void loadChildren() {
-        int y = 0;
         for (Tile tile : this.tiles) {
-            tile.set_y(y + tile.getPaddingTop());
             this.addDrawableChild(tile);
-            y += tile.getPageHeight();
         }
+        this.arrangeChildren();
     }
 
     @Override

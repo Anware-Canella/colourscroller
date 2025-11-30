@@ -4,8 +4,8 @@ import net.anware.minecraft.mods.colourscroller.keybind.KeyBind;
 import net.anware.minecraft.mods.colourscroller.keybind.KeyBindLookup;
 import net.anware.minecraft.mods.colourscroller.keybind.KeySequence;
 import net.anware.minecraft.mods.colourscroller.ui.screen.TileScreen;
-import net.anware.minecraft.mods.colourscroller.ui.tile.button.Button;
-import net.anware.minecraft.mods.colourscroller.ui.tile.button.TextButton;
+import net.anware.minecraft.mods.colourscroller.ui.tile.Tile;
+import net.anware.minecraft.mods.colourscroller.ui.tile.components.button.Button;
 import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.text.LiteralText;
 
@@ -13,24 +13,44 @@ import java.util.ArrayList;
 
 import static net.minecraft.client.gui.DrawableHelper.drawTextWithShadow;
 
-public class KeyConfigTile extends ButtonTile {
+public class KeyConfigTile extends Tile {
     public KeyConfigTile(TileScreen screen, int x, int paddingTop, int paddingBottom, int height, KeyBind keyBind) {
         super(screen, x, paddingTop, paddingBottom);
         this.keyBind = keyBind;
         this.height = height;
-
-        this.keyButton = new TextButton(this, 100, 0, 100, this.height, new LiteralText(this.keyBind.toString()));
-        this.setButton = new TextButton(this, 205, 0, 40, this.height, new LiteralText("SET"));
-        this.resetButton = new TextButton(this, 250, 0, 40, this.height, new LiteralText("RESET"));
-        this.buttons.add(keyButton);
-        this.buttons.add(setButton);
-        this.buttons.add(resetButton);
+        
+        this.keyButton = new Button<>(this, 100, 0, 100, this.height, new LiteralText(this.keyBind.toString())) {
+	        @Override
+	        protected boolean clicked() {
+		        this.parent.bufKey.clear();
+                return true;
+	        }
+        };
+        this.setButton = new Button<>(this, 205, 0, 40, this.height, new LiteralText("SET")) {
+            @Override
+            protected boolean clicked() {
+                if (!this.parent.bufKey.isEmpty()) {
+                    this.parent.keyBind.setKeySeq(new KeySequence(this.parent.bufKey));
+                    KeyBindLookup.save();
+                    this.parent.getScreen().setActiveTile(null);
+                }
+                return true;
+            }
+        };
+        this.resetButton = new Button<>(this, 250, 0, 40, this.height, new LiteralText("RESET")) {
+            @Override
+            protected boolean clicked() {
+                this.parent.keyBind.resetKeySeq();
+                this.parent.screen.setActiveTile(null);
+                return true;
+            }
+        };
     }
 
     protected final ArrayList<Integer> bufKey = new ArrayList<>(4);
     protected final KeyBind keyBind;
     protected final int height;
-    protected final TextButton keyButton, setButton, resetButton;
+    protected final Button<KeyConfigTile> keyButton, setButton, resetButton;
 
     @Override
     protected void draw(MatrixStack mxs, int mouse_x, int mouse_y, float delta) {
@@ -43,23 +63,7 @@ public class KeyConfigTile extends ButtonTile {
             this.keyButton.setText(new LiteralText(KeySequence.formatKeySequence(this.bufKey)));
         }
     }
-
-    @Override
-    protected void clicked(int mouse_x, int mouse_y, Button bt) {
-        if (bt == this.setButton) {
-            if (!this.bufKey.isEmpty()) {
-                this.keyBind.setKeySeq(new KeySequence(this.bufKey));
-                KeyBindLookup.save();
-                this.screen.setActiveTile(null);
-            }
-        } else if (bt == this.resetButton) {
-            this.keyBind.resetKeySeq();
-            this.screen.setActiveTile(null);
-        } else if (bt == this.keyButton) {
-            this.bufKey.clear();
-        }
-    }
-
+    
     @Override
     public int getContentHeight() {
         return this.height;
@@ -74,20 +78,20 @@ public class KeyConfigTile extends ButtonTile {
     }
 
     @Override
-    public boolean keyPressed(int keyCode, int scanCode, int modifiers) {
+    public boolean onKey(int key) {
         if (!this.isActive()) {
             return false;
         }
-        if (keyCode < 0) {
+        if (key < 0) {
             return false;
         }
-        if (this.bufKey.contains(keyCode)) {
+        if (this.bufKey.contains(key)) {
             return false;
         }
         if (this.bufKey.size() >= 4) {
             return false;
         }
-        this.bufKey.add(keyCode);
+        this.bufKey.add(key);
         return true;
     }
 }

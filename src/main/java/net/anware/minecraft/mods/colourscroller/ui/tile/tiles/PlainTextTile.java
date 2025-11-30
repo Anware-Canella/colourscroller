@@ -1,11 +1,11 @@
 package net.anware.minecraft.mods.colourscroller.ui.tile.tiles;
 
 import net.anware.minecraft.mods.colourscroller.ui.screen.TileScreen;
-import net.anware.minecraft.mods.colourscroller.ui.tile.ATile;
+import net.anware.minecraft.mods.colourscroller.ui.tile.Tile;
 import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.text.Text;
 
-public class PlainTextTile extends ATile {
+public class PlainTextTile extends Tile {
     public PlainTextTile(TileScreen screen, int x, int paddingTop, int paddingBottom, Text text, int colour) {
         super(screen, x, paddingTop, paddingBottom);
         this.text = text;
@@ -21,7 +21,7 @@ public class PlainTextTile extends ATile {
     }
 
     @Override
-    public void render(MatrixStack matrices, int mouseX, int mouseY, float delta) {
+    public void draw(MatrixStack matrices, int mouseX, int mouseY, float delta) {
         this.drawText(matrices, this.text, this.x, this.y, this.colour);
     }
 }

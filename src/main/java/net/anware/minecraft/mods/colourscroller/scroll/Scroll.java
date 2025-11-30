@@ -22,6 +22,14 @@ public class Scroll {
 	protected final String id;
 	protected final List<Item> items;
 	
+	public int size() {
+		return this.items.size();
+	}
+	
+	public Item getItem(int index) {
+		return this.items.get(index);
+	}
+	
 	public Item getShifted(Item item, int shift) {
 		int index = this.items.indexOf(item);
 		if (index == -1) {
