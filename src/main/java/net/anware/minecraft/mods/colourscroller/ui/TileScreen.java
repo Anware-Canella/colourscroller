@@ -10,6 +10,7 @@ import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.sound.SoundEvents;
 import net.minecraft.text.LiteralText;
 import org.lwjgl.glfw.GLFW;
+import org.lwjgl.system.CallbackI.P;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -28,8 +29,9 @@ public class TileScreen extends Screen {
 	
 	/* -------------------- Tiles ------------------------- */
 	
-	protected final List<Tile> markAdd = new ArrayList<>();
-	protected final List<Tile> markRemove = new ArrayList<>();
+	private boolean dirty = false;
+	private final List<Tile> markAdd = new ArrayList<>();
+	private final List<Tile> markRemove = new ArrayList<>();
 	
 	public void arrangeTiles() {
 		int y = this.padding;
@@ -42,17 +44,21 @@ public class TileScreen extends Screen {
 	
 	public void addTiles(List<Tile> tiles) {
 		this.markAdd.addAll(tiles);
+		this.dirty = true;
 	}
 	
 	public void addTiles(Tile... tiles) {
 		this.markAdd.addAll(List.of(tiles));
+		this.dirty = true;
 	}
 	
 	public void removeTiles(Tile... tiles) {
 		this.markRemove.addAll(List.of(tiles));
+		this.dirty = true;
 	}
 	
 	public void flushChanges() {
+		// clean up tile changes
 		for (Tile t : this.markRemove) {
 			this.tiles.remove(t);
 		}
@@ -60,6 +66,19 @@ public class TileScreen extends Screen {
 		this.markRemove.clear();
 		this.markAdd.clear();
 		this.arrangeTiles();
+		
+		// check scroll
+		int maxScroll = this.pageHeight - this.height;
+		if (maxScroll < 0) {
+			this.scroll = 0;
+			this.animScroll = 0;
+		} else {
+			this.scroll = Numpy.clamp((int) this.scroll, 0, maxScroll);
+			this.animScroll = scroll;
+		}
+		
+		// mark clean
+		this.dirty = false;
 	}
 	
 	public Tile getActiveTile() {
@@ -85,12 +104,14 @@ public class TileScreen extends Screen {
 	public void render(MatrixStack matrices, int mouseX, int mouseY, float delta) {
 		this.renderBackground(matrices);
 		
+		// flush changes to tile elements
+		if (this.dirty) {
+			this.flushChanges();
+		}
+		
 		// update & apply scroll animation
 		this.animScroll = this.scroll * 0.1 + this.animScroll * 0.9;
 		if (Math.abs(this.animScroll) < 0.01) this.animScroll = 0.0;
-		matrices.push();
-		matrices.translate(0, -this.animScroll, 0);
-		mouseY += Numpy.round(this.animScroll);
 		
 		// draw scroll bar
 		if (this.animScroll != 0) {
@@ -103,6 +124,10 @@ public class TileScreen extends Screen {
 			DrawableHelper.fill(matrices, x0, y0, x1 - 2, y1 - 2, 0xFFFFFFFF);
 		}
 		
+		// apply scroll effect and draw
+		matrices.push();
+		matrices.translate(0, -this.animScroll, 0);
+		mouseY += Numpy.round(this.animScroll);
 		for (Tile tile : this.tiles) {
 			tile.invokeDraw(matrices, mouseX, mouseY, delta);
 		}
@@ -114,7 +139,6 @@ public class TileScreen extends Screen {
 		for (Tile tile : this.tiles) {
 			if (tile.invokeClicked(mouseX, mouseY)) {
 				this.setActiveTile(tile);
-				this.flushChanges();
 				return true;
 			}
 		}
@@ -141,18 +165,16 @@ public class TileScreen extends Screen {
 			this.setActiveTile(null);
 			return true;
 		}
-		for (Tile tile : this.tiles) {
-			if (tile.invokeOnKey(keyCode)) {
-				return true;
-			}
+		if (this.activeTile != null) {
+			return this.activeTile.invokeOnKey(keyCode);
 		}
 		return false;
 	}
 	
 	@Override
 	public boolean charTyped(char chr, int modifiers) {
-		for (Tile tile : this.tiles) {
-			if (tile.invokeOnTyped(chr)) {
+		if (this.activeTile != null) {
+			if (this.activeTile.invokeOnTyped(chr)) {
 				return true;
 			}
 		}
@@ -163,7 +185,11 @@ public class TileScreen extends Screen {
 	
 	@Override
 	protected void init() {
+		this.flushChanges();
 		this.arrangeTiles();
+		for (Tile tile : this.tiles) {
+			tile.init();
+		}
 	}
 	
 	public TextRenderer getTextRenderer() {

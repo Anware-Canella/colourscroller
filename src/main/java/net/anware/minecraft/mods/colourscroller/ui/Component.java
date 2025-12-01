@@ -43,6 +43,8 @@ public class Component<T extends Tile> {
 	
 	/* -------------------- Getter / Setter ------------------------- */
 	
+	public void init() {}
+	
 	public void draw(MatrixStack matrices, int mouse_x, int mouse_y, float delta) {}
 	
 	public boolean clicked(double mouse_x, double mouse_y) {

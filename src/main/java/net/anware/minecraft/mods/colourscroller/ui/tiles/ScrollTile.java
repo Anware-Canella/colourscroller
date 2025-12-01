@@ -17,7 +17,21 @@ public class ScrollTile extends Tile {
 		this.scroll = scroll;
 		this.width = width;
 		this.lineHeight = lineHeight;
-		
+	}
+	
+	public static final int
+		ID_BUTTON       = 0xF000;
+	public static final int
+		TITLE_HEIGHT    = 20;
+	protected final Scroll scroll;
+	protected final int width, lineHeight;
+	protected int activeButton = -1;
+	protected Clickable<ScrollTile> removeButton;
+	protected TextBox<ScrollTile> nameTextBox;
+	protected TextBox<ScrollTile> newItemTextBox;
+	
+	@Override
+	public void init() {
 		this.removeButton = new Clickable<>(this, this.width - TITLE_HEIGHT, 0, TITLE_HEIGHT, TITLE_HEIGHT) {
 			@Override
 			protected boolean clicked() {
@@ -36,24 +50,36 @@ public class ScrollTile extends Tile {
 			}
 		};
 		
-		this.nameTextBox = new TextBox<>(this, 50, this.y, 60, 18, this.scroll.getId());
+		this.nameTextBox = new TextBox<>(this, 35, 2, 120, TITLE_HEIGHT - 4, this.scroll.getId()) {
+			@Override
+			protected boolean canEnter(char c) {
+				return (c >= 'a' && c <= 'z') || c == '_';
+			}
+			
+			@Override
+			public void setActive(boolean active) {
+				super.setActive(active);
+				if (!active) {
+					ScrollLookup.changeScrollID(this.parent.scroll, this.getText());
+				}
+			}
+		};
+		
+		this.newItemTextBox = new TextBox<>(this, 2, TITLE_HEIGHT + this.scroll.size() * this.lineHeight + 2, 200, this.lineHeight - 4, "") {
+			@Override
+			protected boolean canEnter(char c) {
+				return (c >= 'a' && c <= 'z') || c == '_' || c == ':';
+			}
+		};
+		
+		super.init();
 	}
-	
-	public static final int
-		ID_BUTTON       = 0xF000;
-	public static final int
-		TITLE_HEIGHT    = 20;
-	protected final Scroll scroll;
-	protected final int width, lineHeight;
-	protected int activeButton = -1;
-	protected final TextBox<ScrollTile> nameTextBox;
-	protected final Clickable<ScrollTile> removeButton;
 	
 	@Override
 	protected void draw(MatrixStack matrices, int mouse_x, int mouse_y, float delta) {
 		this.drawBox(matrices, this.x, this.x + this.width, this.y, this.y + this.getContentHeight(), 0xAA202020, 0xFF000000);
 		this.drawBox(matrices, this.x, this.x + this.width, this.y, this.y + TITLE_HEIGHT, 0xEE202020);
-		this.drawText(matrices, "Name:", this.x + 4, this.y + TITLE_HEIGHT - 4, this.activeButton == ID_BUTTON ? 0xFF707070 : 0xFFFFFFFF, net.anware.minecraft.mods.colourscroller.gui.Tile.ALIGN_LEFT);
+		this.drawText(matrices, "Name:", this.x + 4, this.y + TITLE_HEIGHT - 4, this.activeButton == ID_BUTTON ? 0xFF707070 : 0xFFFFFFFF, Tile.ALIGN_LEFT);
 		
 		if (this.activeButton != -1) {
 			if (this.activeButton == ID_BUTTON) {
@@ -65,13 +91,17 @@ public class ScrollTile extends Tile {
 		}
 		
 		int hoveredButton = this.getItemIndexAt(mouse_x, mouse_y);
+		boolean left = this.x + this.width - mouse_x > this.lineHeight;
 		if (hoveredButton != -1) {
-			if (this.x + this.width - mouse_x > this.lineHeight) {
-				int base_y = this.y + TITLE_HEIGHT + hoveredButton * this.lineHeight;
-				this.drawBox(matrices, this.x, this.x + this.width, base_y, base_y + this.lineHeight, 0xBBBBBBBB);
+			if (left) {
+				if (hoveredButton != this.scroll.size()) {
+					int base_y = this.y + TITLE_HEIGHT + hoveredButton * this.lineHeight;
+					this.drawBox(matrices, this.x, this.x + this.width, base_y, base_y + this.lineHeight, 0xBBBBBBBB);
+				}
 			} else {
+				int colour = hoveredButton == this.scroll.size() ? 0xEE20FF20 : 0xEEFF2020;
 				int base_y = this.y + TITLE_HEIGHT + hoveredButton * this.lineHeight;
-				this.drawBox(matrices, this.x + this.width - this.lineHeight, this.x + this.width, base_y, base_y + this.lineHeight, 0xEEFF2020);
+				this.drawBox(matrices, this.x + this.width - this.lineHeight, this.x + this.width, base_y, base_y + this.lineHeight, colour);
 			}
 		}
 		
@@ -79,14 +109,17 @@ public class ScrollTile extends Tile {
 			Item item = this.scroll.getItem(i);
 			int base_y = this.y + TITLE_HEIGHT + i * this.lineHeight;
 			this.drawItemCentered(item, this.x + this.lineHeight / 2 + 3, base_y + this.lineHeight / 2, 1.0f);
-			this.drawText(matrices, GameUtil.getName(item), this.x + this.lineHeight + 6, base_y + (float) this.lineHeight / 2, this.activeButton == i ? 0xFF707070 : 0xFFFFFFFF, net.anware.minecraft.mods.colourscroller.gui.Tile.ALIGN_MID_V);
+			this.drawText(matrices, GameUtil.getName(item), this.x + this.lineHeight + 6, base_y + (float) this.lineHeight / 2, this.activeButton == i ? 0xFF707070 : 0xFFFFFFFF, Tile.ALIGN_MID_V);
 			this.drawLineCenteredH(matrices, this.x + this.width - this.lineHeight / 2, this.y + TITLE_HEIGHT + i * this.lineHeight + this.lineHeight / 2, 6, 0xDDFFFFFF);
 		}
+		
+		this.drawLineCenteredH(matrices, this.x + this.width - this.lineHeight / 2, this.y + TITLE_HEIGHT + this.scroll.size() * this.lineHeight + this.lineHeight / 2, 6, 0xDDFFFFFF);
+		this.drawLineCenteredV(matrices, this.x + this.width - this.lineHeight / 2, this.y + TITLE_HEIGHT + this.scroll.size() * this.lineHeight + this.lineHeight / 2, 6, 0xDDFFFFFF);
 	}
 	
 	@Override
 	public int getContentHeight() {
-		return this.scroll.size() * this.lineHeight + TITLE_HEIGHT;
+		return (this.scroll.size() + 1) * this.lineHeight + TITLE_HEIGHT;
 	}
 	
 	@Override
@@ -95,20 +128,32 @@ public class ScrollTile extends Tile {
 		if (!active) {
 			this.activeButton = -1;
 		}
+		if (!active || this.activeComponent != this.newItemTextBox) {
+			this.newItemTextBox.clear();
+		}
 	}
 	
 	@Override
 	protected boolean clicked(double mouse_x, double mouse_y) {
-		// TODO : detect other stuff clicks
 		int button = this.getItemIndexAt((int) mouse_x, (int) mouse_y);
 		if (button != -1) {
-			if (this.x + this.width - mouse_x > this.lineHeight) {
-				this.activeButton = button;
+			boolean left = this.x + this.width - mouse_x > this.lineHeight;
+			if (button == this.scroll.size()) {
+				if (left) return false;
+				Item item = GameUtil.getItem(this.newItemTextBox.getText());
+				if (item != null) {
+					ScrollLookup.addItem(this.scroll, item);
+					this.parent.arrangeTiles();
+				}
 				playButtonSound();
+				return true;
+			}
+			playButtonSound();
+			if (left) {
+				this.activeButton = button;
 				return true;
 			} else {
 				this.activeButton = -1;
-				playButtonSound();
 				this.scroll.deleteItem(button);
 				this.parent.arrangeTiles();
 				return true;
@@ -139,7 +184,7 @@ public class ScrollTile extends Tile {
 			return -1;
 		}
 		int i = Math.floorDiv(y - TITLE_HEIGHT - this.y, this.lineHeight);
-		if (i < 0 || i >= this.scroll.size()) {
+		if (i < 0 || i > this.scroll.size()) {
 			return -1;
 		}
 		return i;

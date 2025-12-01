@@ -20,6 +20,8 @@ public class ScrollLookup {
 	public static final Map<Item, Scroll> SCROLL_LOOKUP = new HashMap<>();
 	public static final Path SCROLL_FOLDER = DataFile.CONFIG_PATH.resolve("scrolls");
 	
+	/* -------------------- Files ------------------------- */
+	
 	public static void load() {
 		try {
 			Files.createDirectories(SCROLL_FOLDER);
@@ -63,6 +65,8 @@ public class ScrollLookup {
 		}
 	}
 	
+	/* -------------------- Scrolls ------------------------- */
+	
 	public static void register(Scroll scroll) {
 		if (SCROLL_REGISTRY.containsKey(scroll.id)) {
 			return;
@@ -74,26 +78,6 @@ public class ScrollLookup {
 			SCROLL_LOOKUP.put(item, scroll);
 		}
 		SCROLL_REGISTRY.put(scroll.id, scroll);
-	}
-	
-	public static Scroll find(String id) {
-		return SCROLL_REGISTRY.get(id);
-	}
-	
-	public static Scroll findScroll(Item item) {
-		return SCROLL_LOOKUP.get(item);
-	}
-	
-	public static Item getShifted(Item item, int shift) {
-		Scroll scroll =  SCROLL_LOOKUP.get(item);
-		if (scroll == null) {
-			return null;
-		}
-		return scroll.getShifted(item, shift);
-	}
-	
-	public static void deleteItem(Item item) {
-		SCROLL_LOOKUP.remove(item);
 	}
 	
 	public static void deleteScroll(Scroll scroll) {
@@ -108,7 +92,45 @@ public class ScrollLookup {
 		}
 	}
 	
-	// default scrolls
+	public static void changeScrollID(Scroll scroll, String id) {
+		deleteScroll(scroll);
+		scroll.id = id;
+		register(scroll);
+		scroll.save();
+	}
+	
+	public static Scroll findScroll(String id) {
+		return SCROLL_REGISTRY.get(id);
+	}
+	
+	public static Scroll findScroll(Item item) {
+		return SCROLL_LOOKUP.get(item);
+	}
+	
+	/* -------------------- Items ------------------------- */
+	
+	public static Item getShifted(Item item, int shift) {
+		Scroll scroll =  SCROLL_LOOKUP.get(item);
+		if (scroll == null) {
+			return null;
+		}
+		return scroll.getShifted(item, shift);
+	}
+	
+	public static void addItem(Scroll scroll, Item item) {
+		if (SCROLL_LOOKUP.containsKey(item)) {
+			return;
+		}
+		SCROLL_LOOKUP.put(item, scroll);
+		scroll.addItem(item);
+	}
+	
+	public static void deleteItem(Item item) {
+		SCROLL_LOOKUP.remove(item);
+	}
+	
+	/* -------------------- Default Lists ------------------------- */
+	
 	protected static void loadDefaultScrolls() {
 		register(new Scroll("wool", new ArrayList<>(){{
 			add(Items.WHITE_WOOL);

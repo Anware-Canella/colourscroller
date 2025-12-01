@@ -34,7 +34,7 @@ public class TabTile extends Tile {
 			}
 			
 			this.drawBox(matrices, x + 2, x + width - 2, this.y, this.y + this.height, this.hoveredTab == tab ? 0xCC202020 : 0xAA202020);
-			this.drawText(matrices, tab.title, x + SPACING, this.y + (float) this.height / 2, 0xFFFFFFFF, net.anware.minecraft.mods.colourscroller.gui.Tile.ALIGN_MID_V);
+			this.drawText(matrices, tab.title, x + SPACING, this.y + (float) this.height / 2, 0xFFFFFFFF, Tile.ALIGN_MID_V);
 			x += width;
 		}
 		if (!hovered) this.hoveredTab = null;

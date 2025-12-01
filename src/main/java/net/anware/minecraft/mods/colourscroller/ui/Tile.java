@@ -57,6 +57,12 @@ public abstract class Tile {
 	
 	/* -------------------- Actions ------------------------- */
 	
+	public void init() {
+		for (Component<?> component : this.components) {
+			component.init();
+		}
+	}
+	
 	public void invokeDraw(MatrixStack matrices, int mouse_x, int mouse_y, float delta) {
 		this.draw(matrices, mouse_x, mouse_y, delta);
 		for (Component<?> component : this.components) {
@@ -78,14 +84,18 @@ public abstract class Tile {
 	
 	public boolean invokeOnKey(int key) {
 		if (this.activeComponent != null) {
-			return this.activeComponent.onKey(key);
+			if (this.activeComponent.onKey(key)) {
+				return true;
+			}
 		}
 		return this.onKey(key);
 	}
 	
 	public boolean invokeOnTyped(char c) {
 		if (this.activeComponent != null) {
-			return this.activeComponent.onTyped(c);
+			if (this.activeComponent.onTyped(c)) {
+				return true;
+			}
 		}
 		return this.onTyped(c);
 	}
@@ -203,6 +213,10 @@ public abstract class Tile {
 	
 	public final void drawLineCenteredH(MatrixStack matrices, int x, int y, int len, int colour) {
 		drawLineH(matrices, x - len / 2, x + len / 2, y, colour);
+	}
+	
+	public final void drawLineCenteredV(MatrixStack matrices, int x, int y, int len, int colour) {
+		drawLineV(matrices, x, y - len / 2, y + len / 2, colour);
 	}
 	
 	public final void drawItem(Item item, int x, int y, float scale) {

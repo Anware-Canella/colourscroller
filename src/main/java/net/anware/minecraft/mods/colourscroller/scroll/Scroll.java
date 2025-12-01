@@ -24,7 +24,7 @@ public class Scroll {
 		this.items = new ArrayList<>(List.of(items));
 	}
 	
-	protected final String id;
+	protected String id;
 	protected final List<Item> items;
 	
 	public int size() {
@@ -37,14 +37,6 @@ public class Scroll {
 	
 	public Item getItem(int index) {
 		return this.items.get(index);
-	}
-	
-	public Item getShifted(Item item, int shift) {
-		int index = this.items.indexOf(item);
-		if (index == -1) {
-			return null;
-		}
-		return this.items.get(Numpy.roundIndex(index + shift, this.items.size()));
 	}
 	
 	public void deleteItem(int index) {
@@ -63,6 +55,19 @@ public class Scroll {
 		this.items.set(newIndex, this.items.get(index));
 		this.items.set(index, item);
 		this.save();
+	}
+	
+	public void addItem(Item item) {
+		this.items.add(item);
+		this.save();
+	}
+	
+	public Item getShifted(Item item, int shift) {
+		int index = this.items.indexOf(item);
+		if (index == -1) {
+			return null;
+		}
+		return this.items.get(Numpy.roundIndex(index + shift, this.items.size()));
 	}
 	
 	public void save() {

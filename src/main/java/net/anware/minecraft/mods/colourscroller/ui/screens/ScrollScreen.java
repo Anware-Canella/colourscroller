@@ -20,8 +20,6 @@ public class ScrollScreen extends TileScreen {
 		for (Scroll scroll : ScrollLookup.SCROLL_REGISTRY.values()) {
 			tiles.add(new ScrollTile(this, 30, 10, 0, scroll, 250, 20));
 		}
-		
 		this.addTiles(tiles);
-		this.flushChanges();
 	}
 }

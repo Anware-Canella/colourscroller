@@ -27,4 +27,8 @@ public class KeyWrapper {
             }
         });
     }
+    
+    public int getKey(int key) {
+        return GLFW.glfwGetKey(this.window, key);
+    }
 }

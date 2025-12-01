@@ -20,7 +20,6 @@ public class ConfigScreen extends TileScreen {
 			new KeyConfigTile(this, 30, 0, 5, 20, KeyBindLookup.SCROLL_HOTBAR),
 			new KeyConfigTile(this, 30, 0, 5, 20, KeyBindLookup.SCROLL_SINGLE)
 		);
-		this.flushChanges();
 	}
 	
 	protected static TabTile getTabTile(TileScreen screen) {

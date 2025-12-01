@@ -16,7 +16,15 @@ public class KeyConfigTile extends Tile {
 		super(parent, x, padTop, padBottom);
 		this.keyBind = keyBind;
 		this.height = height;
-		
+	}
+	
+	protected final ArrayList<Integer> bufKey = new ArrayList<>(4);
+	protected final KeyBind keyBind;
+	protected final int height;
+	protected Button<KeyConfigTile> keyButton, setButton, resetButton;
+	
+	@Override
+	public void init() {
 		this.keyButton = new Button<>(this, 100, 0, 100, this.height, this.keyBind.toString()) {
 			@Override
 			protected boolean clicked() {
@@ -36,22 +44,19 @@ public class KeyConfigTile extends Tile {
 				return false;
 			}
 		};
-		this.setButton.setEnabled(false);
 		this.resetButton = new Button<>(this, 250, 0, 40, this.height, "Reset") {
 			@Override
 			protected boolean clicked() {
 				this.parent.keyBind.resetKeySeq();
+				KeyBindLookup.save();
 				this.parent.updateBufKey();
 				this.parent.parent.setActiveTile(null);
 				return false;
 			}
 		};
+		this.setButton.setEnabled(false);
+		super.init();
 	}
-	
-	protected final ArrayList<Integer> bufKey = new ArrayList<>(4);
-	protected final KeyBind keyBind;
-	protected final int height;
-	protected final Button<KeyConfigTile> keyButton, setButton, resetButton;
 	
 	@Override
 	protected void draw(MatrixStack matrices, int mouse_x, int mouse_y, float delta) {

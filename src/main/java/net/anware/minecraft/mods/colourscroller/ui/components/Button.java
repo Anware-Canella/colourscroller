@@ -31,7 +31,7 @@ public class Button<T extends Tile> extends Clickable<T> {
 		TextRenderer textRenderer = this.parent.parent.getTextRenderer();
 		int textColour = this.enabled ? 0xFFFFFFFF : 0xFF303030;
 		if (textRenderer != null && text != null) {
-			this.parent.drawText(matrices, this.text, x + (float) this.w / 2, y + (float) this.h / 2, textColour, net.anware.minecraft.mods.colourscroller.gui.Tile.ALIGN_CENTER);
+			this.parent.drawText(matrices, this.text, x + (float) this.w / 2, y + (float) this.h / 2, textColour, Tile.ALIGN_CENTER);
 		}
 	}
 }
