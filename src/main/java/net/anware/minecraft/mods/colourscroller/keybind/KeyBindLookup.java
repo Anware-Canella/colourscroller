@@ -3,7 +3,7 @@ package net.anware.minecraft.mods.colourscroller.keybind;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
-import net.anware.minecraft.mods.colourscroller.ui.screen.ConfigScreen;
+import net.anware.minecraft.mods.colourscroller.ui.screens.ConfigScreen;
 import net.anware.minecraft.mods.colourscroller.util.DataFile;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;

@@ -18,4 +18,8 @@ public class Numpy {
 		}
 		return val;
 	}
+	
+	public static int round(double val) {
+		return (int) Math.round(val);
+	}
 }
