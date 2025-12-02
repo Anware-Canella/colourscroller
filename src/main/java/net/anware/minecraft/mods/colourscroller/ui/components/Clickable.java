@@ -11,7 +11,7 @@ public class Clickable<T extends Tile> extends Component<T> {
 	protected boolean enabled = true;
 	
 	@Override
-	public boolean clicked(double mouse_x, double mouse_y) {
+	public final boolean clicked(double mouse_x, double mouse_y) {
 		if (!this.enabled) {
 			return false;
 		}

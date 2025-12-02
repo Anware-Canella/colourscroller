@@ -7,7 +7,6 @@ import net.anware.minecraft.mods.colourscroller.ui.Tile;
 import net.anware.minecraft.mods.colourscroller.ui.TileScreen;
 import net.anware.minecraft.mods.colourscroller.ui.components.Button;
 import net.minecraft.client.util.math.MatrixStack;
-import net.minecraft.text.LiteralText;
 
 import java.util.ArrayList;
 

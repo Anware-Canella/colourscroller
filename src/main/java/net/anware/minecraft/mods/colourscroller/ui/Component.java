@@ -14,8 +14,8 @@ public class Component<T extends Tile> {
 	
 	protected final T parent;
 	protected boolean active = false, hover = false;
-	private final int x, y;
-	protected final int w, h;
+	private int x, y;
+	protected int w, h;
 	
 	/* -------------------- Getter / Setter ------------------------- */
 	
@@ -25,6 +25,14 @@ public class Component<T extends Tile> {
 	
 	public int y() {
 		return this.y + this.parent.get_y();
+	}
+	
+	public void set_x(int x) {
+		this.x = x;
+	}
+	
+	public void set_y(int y) {
+		this.y = y;
 	}
 	
 	public void setActive(boolean active) {

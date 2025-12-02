@@ -123,7 +123,7 @@ public abstract class Tile {
 	public void setActive(boolean active) {
 		this.active = active;
 		if (!active && this.activeComponent != null) {
-			this.activeComponent.setActive(false);
+			this.setActiveComponent(null);
 		}
 	}
 	

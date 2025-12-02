@@ -76,6 +76,14 @@ public class ScrollTile extends Tile {
 	}
 	
 	@Override
+	public void set_y(int y) {
+		super.set_y(y);
+		if (this.newItemTextBox != null) {
+			this.newItemTextBox.set_y(TITLE_HEIGHT + this.scroll.size() * this.lineHeight + 2);
+		}
+	}
+	
+	@Override
 	protected void draw(MatrixStack matrices, int mouse_x, int mouse_y, float delta) {
 		this.drawBox(matrices, this.x, this.x + this.width, this.y, this.y + this.getContentHeight(), 0xAA202020, 0xFF000000);
 		this.drawBox(matrices, this.x, this.x + this.width, this.y, this.y + TITLE_HEIGHT, 0xEE202020);
@@ -146,7 +154,7 @@ public class ScrollTile extends Tile {
 					this.parent.arrangeTiles();
 				}
 				playButtonSound();
-				return true;
+				return false;
 			}
 			playButtonSound();
 			if (left) {

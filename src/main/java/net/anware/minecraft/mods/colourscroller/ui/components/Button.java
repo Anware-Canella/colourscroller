@@ -24,9 +24,9 @@ public class Button<T extends Tile> extends Clickable<T> {
 		int outlineColour = 0xFF202020;
 		if (this.active)
 			outlineColour = 0xFFFFFFFF;
-		else if (this.hover)
+		else if (this.hovered())
 			outlineColour = 0xFF606060;
-		this.parent.drawBox(matrices, x, x + this.w, y, y + this.h, 0xDD000000, outlineColour);
+		this.parent.drawBox(matrices, x, x + this.w, y, y + this.h, 0xAA202020, outlineColour);
 		
 		TextRenderer textRenderer = this.parent.parent.getTextRenderer();
 		int textColour = this.enabled ? 0xFFFFFFFF : 0xFF303030;

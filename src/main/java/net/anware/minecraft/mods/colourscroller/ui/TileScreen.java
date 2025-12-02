@@ -1,16 +1,12 @@
 package net.anware.minecraft.mods.colourscroller.ui;
 
-import net.anware.minecraft.mods.colourscroller.util.GameUtil;
 import net.anware.minecraft.mods.colourscroller.util.Numpy;
 import net.minecraft.client.font.TextRenderer;
 import net.minecraft.client.gui.DrawableHelper;
 import net.minecraft.client.gui.screen.Screen;
-import net.minecraft.client.sound.PositionedSoundInstance;
 import net.minecraft.client.util.math.MatrixStack;
-import net.minecraft.sound.SoundEvents;
 import net.minecraft.text.LiteralText;
 import org.lwjgl.glfw.GLFW;
-import org.lwjgl.system.CallbackI.P;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -184,7 +180,7 @@ public class TileScreen extends Screen {
 	/* -------------------- Inherited ------------------------- */
 	
 	@Override
-	protected void init() {
+	public void init() {
 		this.flushChanges();
 		this.arrangeTiles();
 		for (Tile tile : this.tiles) {
